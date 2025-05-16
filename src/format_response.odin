@@ -27,6 +27,9 @@ Status_Code :: enum {
 Content_Type :: enum {
 	text_html,
 	text_css,
+	image_png,
+	image_jpeg,
+	image_x_icon,
 }
 
 DEFAULT_HEADER :: "Server: A custom server written in odin :D\r\nConnection: closed\r\nDate: %s\r\nCache-Control: no-store\r\nContent-Type: %s\r\nContent-Length: %d\r\n"
