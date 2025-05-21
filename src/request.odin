@@ -28,8 +28,6 @@ Request_Header :: enum {
 }
 
 parse_request :: proc(raw_request: ^string) -> (request: Request, ok: bool) {
-	context.allocator = context.temp_allocator
-
 	//                                       v empty line that separates content from the rest
 	blocks := strings.split_n(raw_request^, "\r\n\r\n", 2)
 
@@ -51,8 +49,6 @@ parse_request :: proc(raw_request: ^string) -> (request: Request, ok: bool) {
 	}
 
 	request.content = blocks[1]
-
-	free_all(context.temp_allocator)
 
 	return
 }
@@ -131,4 +127,3 @@ parse_header :: proc(request: ^Request, line: string) -> bool {
 
 	return true
 }
-

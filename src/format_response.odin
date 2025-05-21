@@ -7,7 +7,7 @@ import "core:time"
 Response :: struct {
 	status_code:  Status_Code,
 	content_type: Content_Type,
-	content:      string,
+	content:      []u8,
 }
 
 Status_Code :: enum {
@@ -27,9 +27,10 @@ Status_Code :: enum {
 Content_Type :: enum {
 	text_html,
 	text_css,
+	application_javascript,
 	image_png,
 	image_jpeg,
-	image_x_icon,
+	image_svg_xml,
 }
 
 DEFAULT_HEADER :: "Server: A custom server written in odin :D\r\nConnection: closed\r\nDate: %s\r\nCache-Control: no-store\r\nContent-Type: %s\r\nContent-Length: %d\r\n"
@@ -155,8 +156,15 @@ content_type_to_str :: proc(type: Content_Type) -> string {
 		return "text/html"
 	case .text_css:
 		return "text/css"
+	case .application_javascript:
+		return "application/javascript"
+	case .image_png:
+		return "image/png"
+	case .image_jpeg:
+		return "image/jpeg"
+	case .image_svg_xml:
+		return "image/svg+xml"
 	}
 
 	return ""
 }
-

@@ -5,10 +5,34 @@
 }
 
 body {
-  font-family: Verdana Arial sans-serif;
+  font-family: monospace;
+  min-height: 100vh;
+  padding: 2rem 20vw;
+  background-color: black;
+}
+
+body>* {
+  margin: 1rem 0;
+  font-size: 1.25rem;
+  line-height: 2rem;
+  color: lime;
+}
+
+h1 {
+  font-size: 2.75rem;
+}
+
+h2 {
+  font-size: 2.25rem;
 }
 
 h1,
 h2 {
-  font-family: "Times New Roman" Garamond serif;
+  margin: 3rem 0;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: 2px solid lime;
+  background-color: black;
 }

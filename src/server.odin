@@ -7,7 +7,7 @@ import "core:net"
 main :: proc() {
 	when ODIN_DEBUG {
 		context.logger = log.create_console_logger(
-			.Info,
+			.Warning,
 			{.Level, .Terminal_Color, .Short_File_Path, .Line, .Procedure},
 		)
 	}
@@ -58,6 +58,8 @@ main :: proc() {
 
 	buffer := make([]u8, 1024)
 
+	context.allocator = context.temp_allocator
+
 	for true {
 		client_socket, client_endpoint, accept_err := net.accept_tcp(listen_socket)
 		if accept_err != nil {
@@ -98,6 +100,7 @@ main :: proc() {
 		net.send_tcp(client_socket, transmute([]u8)raw_response)
 
 		net.close(client_socket)
+
+		free_all(context.allocator)
 	}
 }
-
