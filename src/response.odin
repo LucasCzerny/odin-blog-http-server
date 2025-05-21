@@ -60,3 +60,4 @@ respond_with_resource :: proc(path: string) -> Response {
 
 	return Response{status_code = .ok, content_type = type, content = content}
 }
+

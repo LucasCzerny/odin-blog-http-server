@@ -1,6 +1,12 @@
+#post-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
 iframe {
   width: 100%;
   height: 500px;
-  border: 5px solid lime;
+  border: 5px solid black;
   cursor: pointer;
 }

@@ -7,15 +7,25 @@
 body {
   font-family: monospace;
   min-height: 100vh;
-  padding: 2rem 20vw;
-  background-color: black;
+  padding: 2rem 7.5vw;
+}
+
+@media (min-width: 700px) {
+  body {
+    padding: 2rem 10vw;
+  }
+}
+
+@media (min-width: 1500px) {
+  body {
+    padding: 2rem 15vw;
+  }
 }
 
 body>* {
   margin: 1rem 0;
   font-size: 1.25rem;
   line-height: 2rem;
-  color: lime;
 }
 
 h1 {
@@ -33,6 +43,5 @@ h2 {
 
 button {
   padding: 0.5rem 1rem;
-  border: 2px solid lime;
-  background-color: black;
+  border: 2px solid black;
 }

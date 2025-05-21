@@ -13,5 +13,20 @@ window.addEventListener('DOMContentLoaded', () => {
         body.removeChild(toRemove);
       }
     }
+
+    sendHeight();
   }
 });
+
+window.addEventListener("resize", () => {
+  if (window.self !== window.top) {
+    sendHeight();
+  }
+});
+
+function sendHeight() {
+  console.log("sending that bish")
+  
+  const height = document.body.scrollHeight + 10;
+  parent.postMessage({type: "setHeight", height: height}, "*")
+}
