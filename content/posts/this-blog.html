@@ -4,6 +4,7 @@
 
 <body>
   <h1>Why does this blog exist?</h1>
+
   <b>22.05.2025</b>
 
   <p>
@@ -38,7 +39,8 @@
     overkill for hobby projects (and projects that use the GPU a lot, as most errors will happen there anyway. So why
     spend so much energy getting the CPU side of the project 99.9% safe?). There is one other language however which
     I've recently come to love. After being frustrated with C++, I looked around for alternatives. And one language in
-    particular stuck out to me: <b>Odin</b>.
+    particular stuck out to me:<br>
+    <b>Odin</b>.
   </p>
 
   <p>
@@ -52,26 +54,121 @@
   </p>
 
   <br>
-
+  <!-- noformat --> <!-- thanks for the syntax highlighting chatgpt lol -->
   <pre>
-    when ODIN_DEBUG {
-    tracking_allocator: mem.Tracking_Allocator
-    mem.tracking_allocator_init(&tracking_allocator, context.allocator)
-    context.allocator = mem.tracking_allocator(&tracking_allocator)
+  <span class="kw">when</span> <span class="macro">ODIN_DEBUG</span> {
+    <span class="var">tracking_allocator</span>: <span class="type">mem.Tracking_Allocator</span>
+    <span class="func">mem.tracking_allocator_init</span>(&<span class="var">tracking_allocator</span>, <span class="var">context.allocator</span>)
+    <span class="var">context.allocator</span> = <span class="func">mem.tracking_allocator</span>(&<span class="var">tracking_allocator</span>)
 
-    defer {
-    for _, entry in tracking_allocator.allocation_map {
-    context.logger = {}
-    log.warnf("%v leaked %d bytes", entry.location, entry.size)
+    <span class="kw">defer</span> {
+      <span class="kw">for</span> _, <span class="var">entry</span> <span class="kw">in</span> <span class="var">tracking_allocator.allocation_map</span> {
+        <span class="func">log.warnf</span>(<span class="str">"%v leaked %d bytes"</span>, <span class="var">entry.location</span>, <span class="var">entry.size</span>)
+      }
+
+      <span class="kw">for</span> <span class="var">entry</span> <span class="kw">in</span> <span class="var">tracking_allocator.bad_free_array</span> {
+        <span class="func">log.warnf</span>(<span class="str">"%v bad free on %v"</span>, <span class="var">entry.location</span>, <span class="var">entry.memory</span>)
+      }
+
+      <span class="func">mem.tracking_allocator_destroy</span>(&<span class="var">tracking_allocator</span>)
+    }
+  }
+  </pre>
+  <!-- noformat -->
+
+  <p>
+    This code checks whether we're in debug mode and if so, it will create a tracking allocator (basically has an
+    allocation map and a free array to make sure you don't leak memory or double free). The defer keyword makes the
+    scope run at the end of the main function. Since we set the context.allocator and most of the code I wrote just
+    defaults to using it, this is an extremely useful tool to check whether I made any mistaked (which I never do ofc
+    ;)).
+  </p>
+
+  <h2>The core:net library</h2>
+
+  <p>
+    When someone says that they're writing something from scratch that's usually a lie. To truly make something from
+    scratch, you'd probably have to write it in assembly. The level of abstraction that I chose are C-like sockets. I'm
+    obviously not using C, but the odin standard library has a very similiar interface. For example, this is how you
+    listen on a TCP socket:
+  </p>
+
+  <br>
+
+  <!-- noformat -->
+  <pre>
+    <span class="var">listen_endpoint</span> := <span class="type">net.Endpoint</span> {
+      <span class="var">address</span> = <span class="type">net.IP4_Address</span>{<span class="num">127</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">1</span>},
+      <span class="var">port</span>    = <span class="num">8080</span>,
     }
 
-    for entry in tracking_allocator.bad_free_array {
-    context.logger = {}
-    log.warnf("%v bad free on %v", entry.location, entry.memory)
-    }
+    <span class="func">net.bind</span>(<span class="var">tcp_socket</span>, <span class="var">listen_endpoint</span>)
 
-    mem.tracking_allocator_destroy(&tracking_allocator)
-    }
+    <span class="var">listen_socket</span>, <span class="var">listen_err</span> := <span class="func">net.listen_tcp</span>(<span class="var">listen_endpoint</span>)
+    <span class="kw">if</span> <span class="var">listen_err</span> != <span class="kw">nil</span> {
+      <span class="func">log.errorf</span>(<span class="str">"Failed to put the socket into the listening state (err: %v)"</span>, <span class="var">listen_err</span>)
+      <span class="kw">return</span>
     }
   </pre>
+  <!-- noformat -->
+
+  <p>
+    This should be very familiar for C devs. All the data that you receive from the socket is stored in a []u8 (that's a
+    slice of u8's).
+  </p>
+
+  <h2>HTTP/1.1 is easier than I thought</h2>
+
+  <p>
+    Pretty quickly, my uncertainty about HTTP disappeared. Building a simple HTTP/1.1 server is extremely simple. For
+    this project, I actually went for a very simple implementation. It's not a general purpose backend like Flask since
+    I chose to keep it very specific to my purpose. This allows me to take some nice shortcuts like hardcoding most the
+    response headers (except for the mime type f.e.). If you check the response headers for this html file, you'll see
+    the 6 headers that I set.
+  </p>
+
+  <p>
+    The way the server fetches resources is kept very simple. Everything has to come from the content/ folder. Every
+    uri has to consist of two parts: /folder/file.extension. The folder has to match the extension: .css files have to
+    be in the styles folder, .png in the images folder, etc. If they match, the server will look for them in at
+    content/folder/file.extension. I didn't see a reason why I should make it more general, as that will open me up to
+    more vulnerabilities like CSRF.
+  </p>
+
+  <h2>Conclusion</h2>
+
+  <p>
+    In my opinion, implemeting something from scratch is a great learning experience. No matter how much you study
+    something in theory, writing the code out yourself gives you a level of understanding that is not attainable
+    otherwise. So if there's ever something you're really interested in but struggle to understand, just give writing it
+    from scratch a shot. It doesn't matter if no one ends up using it - it's all about the friends we made along the
+    way. Or the knowledge we gained? idk
+  </p>
 </body>
+
+<style>
+  .kw {
+    color: #7aa2f7;
+    font-weight: bold;
+  }
+
+  .macro {
+    color: #bb9af7;
+  }
+
+  .type {
+    color: #2ac3de;
+  }
+
+  .func {
+    color: #7dcfff;
+  }
+
+  .var {
+    color: #c0caf5;
+  }
+
+  .str {
+    color: #9ece6a;
+  }
+</style>

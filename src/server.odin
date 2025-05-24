@@ -19,12 +19,10 @@ main :: proc() {
 
 		defer {
 			for _, entry in tracking_allocator.allocation_map {
-				context.logger = {}
 				log.warnf("%v leaked %d bytes", entry.location, entry.size)
 			}
 
 			for entry in tracking_allocator.bad_free_array {
-				context.logger = {}
 				log.warnf("%v bad free on %v", entry.location, entry.memory)
 			}
 
@@ -104,3 +102,4 @@ main :: proc() {
 		free_all(context.allocator)
 	}
 }
+
