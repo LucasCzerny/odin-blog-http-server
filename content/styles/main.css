@@ -5,6 +5,8 @@
 }
 
 body {
+  background-color: #121212;
+  color: white;
   font-family: monospace;
   min-height: 100vh;
   padding: 2rem 7.5vw;
@@ -30,18 +32,34 @@ body>* {
 
 h1 {
   font-size: 2.75rem;
+  line-height: 3.5rem;
 }
 
 h2 {
   font-size: 2.25rem;
+  line-height: 2.5rem;
 }
 
 h1,
 h2 {
-  margin: 3rem 0;
+  margin: 3rem 0 2rem 0;
+  color: mediumslateblue;
 }
 
 button {
+  background-color: inherit;
+  color: inherit;
+  font-family: monospace;
   padding: 0.5rem 1rem;
-  border: 2px solid black;
+  border: 3px solid mediumslateblue;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(90%);
+}
+
+button:active {
+  filter: brightness(85%);
 }

@@ -1,0 +1,77 @@
+<head>
+  <title>Why does this blog exist?</title>
+</head>
+
+<body>
+  <h1>Why does this blog exist?</h1>
+  <b>22.05.2025</b>
+
+  <p>
+    Recently, I was kind of frustrated with my lack of knowledge about networking. We used sockets in C at university,
+    but I definitely had some knowledge gaps. Also, even though I've designed a good amount of websites in the past, the
+    HTML protocol has always just been a blackbox for me. For this reason, I decided to write my own HTTP server.
+  </p>
+
+  <h2>Choosing a language</h2>
+
+  <p>
+    I feel like most people would immediately go for C when writing something from scratch. While this is a reasonable
+    choice, I've personally never really liked C. Not because I'm scawed of manual memowy management :( but rather
+    because the language just feels kind of... clumsy?
+  </p>
+
+  <p>
+    Even doing something as simple as getting command line arguments is really annoying (all my homies hate getopt).
+    Error handling is awkward (does a return value of -1 mean failure? or 0?), enums are pretty meh, the entire
+    toolchain sucks (I don't wanna learn make...).
+  </p>
+
+  <p>
+    Fortunately, there are a lof of other options nowadays. Zig and Rust are probably the two most popular. I'm
+    actually very well versed with C++. However, I recently moved away from it after having a crashout over CMake (why
+    yes I would love to write 2000 lines of this stupid ass language just to run my program!!!). So, which one did I
+    choose? Zig or Rust?
+  </p>
+
+  <p>
+    Well, I've never tried Zig but it looks pretty nice. I've done a bit of Rust in the past but I think it's pretty
+    overkill for hobby projects (and projects that use the GPU a lot, as most errors will happen there anyway. So why
+    spend so much energy getting the CPU side of the project 99.9% safe?). There is one other language however which
+    I've recently come to love. After being frustrated with C++, I looked around for alternatives. And one language in
+    particular stuck out to me: <b>Odin</b>.
+  </p>
+
+  <p>
+    Not many people have heard of odin, but it's by far the best language I've ever used. It's basically like C but...
+    not horrible to use. It has some extremely useful language features, like the implicit context. The context is a
+    special struct that is implicitly passed to each function (or procedure as they're called in odin). This happens as
+    part of odin's own calling convention. The context object contains information like an allocator or logger (there's
+    also a user_ptr field where you can put your own data, but I don't use it that much). Most functions that allocate
+    memory will use the context.allocator (unless specified otherwise). I love using this feature for setting up a
+    tracking allocator:
+  </p>
+
+  <br>
+
+  <pre>
+    when ODIN_DEBUG {
+    tracking_allocator: mem.Tracking_Allocator
+    mem.tracking_allocator_init(&tracking_allocator, context.allocator)
+    context.allocator = mem.tracking_allocator(&tracking_allocator)
+
+    defer {
+    for _, entry in tracking_allocator.allocation_map {
+    context.logger = {}
+    log.warnf("%v leaked %d bytes", entry.location, entry.size)
+    }
+
+    for entry in tracking_allocator.bad_free_array {
+    context.logger = {}
+    log.warnf("%v bad free on %v", entry.location, entry.memory)
+    }
+
+    mem.tracking_allocator_destroy(&tracking_allocator)
+    }
+    }
+  </pre>
+</body>
