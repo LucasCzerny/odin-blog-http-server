@@ -5,11 +5,13 @@
 }
 
 body {
+  width: 100vw;
   background-color: #121212;
   color: white;
   font-family: monospace;
   min-height: 100vh;
   padding: 2rem 7.5vw;
+  overflow-x: hidden;
 }
 
 @media (min-width: 700px) {
@@ -31,19 +33,39 @@ body>* {
 }
 
 h1 {
-  font-size: 2.75rem;
-  line-height: 3.5rem;
+  font-size: 2.5rem;
+  line-height: 2.75rem;
 }
 
 h2 {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
+  font-size: 2rem;
+  line-height: 2.25rem;
+}
+
+@media (min-width: 1500px) {
+  h1 {
+    font-size: 2.75rem;
+    line-height: 3.5rem;
+  }
+
+  h2 {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
 }
 
 h1,
 h2 {
   margin: 3rem 0 2rem 0;
   color: mediumslateblue;
+}
+
+p,
+pre {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 button {

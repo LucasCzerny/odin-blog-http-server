@@ -42,15 +42,17 @@ parse_request :: proc(raw_request: ^string) -> (request: Request, ok: bool) {
 		}
 
 		if !ok {
-			return
+			return request, ok
 		}
 
 		request_line = false
 	}
 
-	request.content = blocks[1]
+	if len(blocks) == 2 {
+		request.content = ""
+	}
 
-	return
+	return request, ok
 }
 
 parse_request_line :: proc(request: ^Request, line: string) -> bool {

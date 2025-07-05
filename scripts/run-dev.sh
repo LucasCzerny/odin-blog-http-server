@@ -1,3 +1,3 @@
 #!/bin/bash
 
-odin run src -out=server -debug -vet -strict-style
+odin run src -out=build/server -debug -vet -strict-style

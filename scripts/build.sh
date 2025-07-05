@@ -1,3 +1,3 @@
 #!/bin/bash
 
-odin build src -out=server
+odin build src -out=build/server
